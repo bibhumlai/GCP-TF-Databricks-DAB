@@ -9,8 +9,37 @@ on:
         - main
 
 jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+      
+      - name: Authentictate to GCP
+        # This creates a temporary file from your secret for Terraform to use
+        run: echo "${{ secrets.GCP_CREDENTIALS }}" > gcp_credentials.json
+
+      - name: Terraform Initialize
+        run: terraform init
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: gcp_credentials.json
+      
+      - name: Terraform Plan
+        run: terraform plan
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: gcp_credentials.json
+    
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: gcp_credentials.json
+
   #i. validation Stage
   validate:
+    needs: terraform
     runs-on: ubuntu-latest
     defaults:
       run:
