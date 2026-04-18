@@ -21,34 +21,47 @@ resource "databricks_schema" "raw" {
 
 # 3. Create a specialized Job Cluster Policy (Cost Optimization!)
 resource "databricks_cluster_policy" "migration_policy" {
-    
-    name = "Nativo-Migration-Policy"
-    definition = jsonencode({
-        "autotermination_minutes": {
-            "type": "fixed",
-            "value": 30
-        },
-        "cluster_type": {
-            "type": "fixed",
-            "value": "job"
-        },
-        # Fix for SSD_TOTAL_GB quota: Limit the disk size per worker
-        "gcp_attributes.boot_disk_size_gb": {
-            "type": "range",
-            "maxValue": 50
-    },
-    # Force a cheaper/standard disk type if you don't strictly need SSD
-        "gcp_attributes.gce_availability": {
-          "type": "fixed",
-          "value": "ON_DEMAND_GCP"
-    },
-    # Limit the maximum number of workers to prevent aggregate disk blow-out
-        "num_workers": {
-          "type": "range",
-          "maxValue": 4
+  name = "Nativo-Migration-Policy"
+
+  definition = jsonencode({
+    "autotermination_minutes" = {
+      type  = "fixed"
+      value = 30
     }
 
-    })
+    "cluster_type" = {
+      type  = "fixed"
+      value = "job"
+    }
+
+    # Disk size per node (GB) - keeps SSD_TOTAL_GB quota under control
+    "disk_spec.disk_size" = {
+      type     = "range"
+      maxValue = 50
+    }
+
+    # Number of disks per node
+    "disk_spec.disk_count" = {
+      type  = "fixed"
+      value = 1
+    }
+
+    # Disk type - BALANCED_SSD uses less quota than PERSISTENT_SSD
+    "disk_spec.disk_type.gcp_disk_type" = {
+      type  = "fixed"
+      value = "BALANCED_SSD"
+    }
+
+    "gcp_attributes.availability" = {
+      type  = "fixed"
+      value = "PREEMPTIBLE_GCP"   # switch to ON_DEMAND_GCP for prod policy
+    }
+
+    "num_workers" = {
+      type     = "range"
+      maxValue = 4
+    }
+  })
 }
 # 1. Create the landing zone bucket for migration data
 resource "google_storage_bucket" "migration_storage" {
