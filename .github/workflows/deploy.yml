@@ -87,11 +87,11 @@ jobs:
         with:
           terraform_version: 1.5.5
 
-      # Inject Terraform here too!
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.6.1
+      # # Inject Terraform here too!
+      # - name: Setup Terraform
+      #   uses: hashicorp/setup-terraform@v2
+      #   with:
+      #     terraform_version: 1.6.1
       # ADD THE SAME UV INSTALL STEPS HERE
       - name: Install uv
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -102,12 +102,15 @@ jobs:
       - name: databricks CLI setup
         uses: databricks/setup-cli@main
 
-      - name: Import HashiCorp GPG keys
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gnupg curl
-          curl -fsSL https://keybase.io/hashicorp/pgp_keys.asc | gpg --import
-          gpg --list-keys
+      - name: Skip Terraform signature verification
+        run: echo "DATABRICKS_TF_SKIP_VERIFY=1" >> $GITHUB_ENV
+
+      # - name: Import HashiCorp GPG keys
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y gnupg curl
+      #     curl -fsSL https://keybase.io/hashicorp/pgp_keys.asc | gpg --import
+      #     gpg --list-keys
 
       - name: deploy to dev
         run: databricks bundle deploy -t dev

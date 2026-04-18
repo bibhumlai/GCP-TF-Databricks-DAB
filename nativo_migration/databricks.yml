@@ -1,7 +1,7 @@
 # This is a Databricks asset bundle definition for nativo_migration.
 # See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
-terraform:
-    exec_path: terraform
+# terraform:
+#     exec_path: terraform
 bundle:
   name: nativo_migration
   
