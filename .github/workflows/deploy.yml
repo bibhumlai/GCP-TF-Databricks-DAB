@@ -19,8 +19,10 @@ jobs:
       
       - name: Authentictate to GCP
         # This creates a temporary file from your secret for Terraform to use
-        run: echo "${{ secrets.GCP_CREDENTIALS }}" > gcp_credentials.json
-
+        run: |
+          echo "$GCP_JSON_KEY" > provider_key.json
+        env:
+          GCP_JSON_KEY: ${{ secrets.GCP_SA_KEY }}
       - name: Terraform Initialize
         run: terraform init
         env:
