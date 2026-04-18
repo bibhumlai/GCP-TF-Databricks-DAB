@@ -1,0 +1,42 @@
+name: Deploy Migration CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+      branches:
+        - main
+
+jobs:
+  #i. validation Stage
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: databricks/setup-cli@main
+      - name: databricks bundle valdiate
+        run: databricks bundle validate
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+  
+  deploy:
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: databricks CLI setup
+        uses: databricks/setup-cli@main
+      
+      - name: deploy to dev
+        run: databricks bundle deploy -t dev
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
