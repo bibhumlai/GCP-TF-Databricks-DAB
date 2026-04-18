@@ -11,7 +11,7 @@ resources:
             num_workers: 1
             gcp_attributes:
               availability: PREEMPTIBLE_GCP      # ← was missing entirely
-              preemptible_percentage: 100
+              
             disk_spec:                           # ← was missing entirely
               disk_type:
                 gcp_disk_type: BALANCED_SSD
@@ -22,7 +22,7 @@ resources:
         - task_key: bronze_ingestion
           job_cluster_key: migration_cluster
           libraries:                             # ← whl must be declared per-task
-            - whl: ../../dist/*.whl
+            - whl: /dist/*.whl
           spark_python_task:
             python_file: ../src/nativo_migration/generator.py
             parameters:
@@ -36,7 +36,7 @@ resources:
             - task_key: bronze_ingestion
           job_cluster_key: migration_cluster
           libraries:
-            - whl: ../../dist/*.whl
+            - whl: /dist/*.whl
           spark_python_task:
             python_file: ../src/nativo_migration/notebook.py
             parameters:
@@ -50,7 +50,7 @@ resources:
             - task_key: silver_transformation
           job_cluster_key: migration_cluster
           libraries:
-            - whl: ../../dist/*.whl
+            - whl: /dist/*.whl
           spark_python_task:
             python_file: ../src/nativo_migration/test_migration.py
             parameters:
