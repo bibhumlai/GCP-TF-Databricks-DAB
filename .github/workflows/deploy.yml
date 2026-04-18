@@ -16,6 +16,8 @@ jobs:
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.5
       
       - name: Authentictate to GCP
         # This creates a temporary file from your secret for Terraform to use
@@ -61,8 +63,8 @@ jobs:
 
       - name: Set up Terraform
         uses: databricks/setup-cli@main
-        with:
-          version: "0.220.0"  #
+        # with:
+        #   version: "0.220.0"  #
       - name: databricks bundle valdiate
         run: databricks bundle validate
         env:
@@ -79,6 +81,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      # Inject Terraform here too!
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.5
       # ADD THE SAME UV INSTALL STEPS HERE
       - name: Install uv
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
