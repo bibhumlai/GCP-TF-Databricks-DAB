@@ -91,7 +91,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.5
+          terraform_version: 1.6.1
       # ADD THE SAME UV INSTALL STEPS HERE
       - name: Install uv
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
