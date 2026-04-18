@@ -101,7 +101,14 @@ jobs:
       
       - name: databricks CLI setup
         uses: databricks/setup-cli@main
-      
+
+      - name: Import HashiCorp GPG keys
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg curl
+          curl -fsSL https://keybase.io/hashicorp/pgp_keys.asc | gpg --import
+          gpg --list-keys
+
       - name: deploy to dev
         run: databricks bundle deploy -t dev
         env:
