@@ -35,6 +35,7 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
         env:
+          TF_LOG: DEBUG  # Optional: Enable detailed logging for troubleshooting
           GOOGLE_APPLICATION_CREDENTIALS: ./gcp_credentials.json
           TF_VAR_databricks_token: ${{ secrets.DATABRICKS_TOKEN }} # <--- Add this
           TF_VAR_databricks_host: ${{ secrets.DATABRICKS_HOST }}   # <--- Good practice to add this too

@@ -1,5 +1,5 @@
 provider "databricks" {
-    host=  "https://8259550887524799.9.gcp.databricks.com"
+    host=  var.databricks_host
     token = var.databricks_token
   
 }
