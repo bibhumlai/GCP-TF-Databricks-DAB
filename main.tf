@@ -29,6 +29,7 @@ provider "databricks" {
     # token = var.databricks_token
     # google_credentials = "D:\\DE\\Databricks\\Databricks on GCP\\Life360\\life360-migration-project\\key.json"  # Note: Use double backslashes for Windows paths in Terraform
     google_service_account = "databricks-tf@project-d938e8ef-98b9-4e42-9e8.iam.gserviceaccount.com"
+    google_credentials     = "./gcp_credentials.json"
 }
 # 3. Create the Databricks Workspace (AWS Equivalent: databricks_mws_workspaces on AWS)
 resource "databricks_mws_workspaces" "new_workspace" {
