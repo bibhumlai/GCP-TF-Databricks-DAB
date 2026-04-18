@@ -2,22 +2,30 @@ resources:
   jobs:
     nativo_medallion_pipeline:
       name: "[${bundle.target}] Nativo Medallion ETL"
-      
+
       job_clusters:
         - job_cluster_key: migration_cluster
           new_cluster:
             spark_version: "13.3.x-scala2.12"
             node_type_id: "n1-standard-4"
             num_workers: 1
-            # Explicitly ensure no policy is overriding the Job lifecycle
-            # policy_id: null 
+            gcp_attributes:
+              availability: PREEMPTIBLE_GCP      # ← was missing entirely
+              preemptible_percentage: 100
+            disk_spec:                           # ← was missing entirely
+              disk_type:
+                gcp_disk_type: BALANCED_SSD
+              disk_size: 50
+              disk_count: 1
 
       tasks:
         - task_key: bronze_ingestion
           job_cluster_key: migration_cluster
-          spark_python_task: # Corrected from python_task
-            python_file: "../src/nativo_migration/generator.py"
-            parameters: # Note: 'base_parameters' is usually just 'parameters' in spark_python_task
+          libraries:                             # ← whl must be declared per-task
+            - whl: ../../dist/*.whl
+          spark_python_task:
+            python_file: ../src/nativo_migration/generator.py
+            parameters:
               - "--catalog"
               - ${var.catalog}
               - "--schema"
@@ -27,12 +35,26 @@ resources:
           depends_on:
             - task_key: bronze_ingestion
           job_cluster_key: migration_cluster
-          spark_python_task: # Corrected from python_task
-            python_file: "../src/nativo_migration/notebook.py"
+          libraries:
+            - whl: ../../dist/*.whl
+          spark_python_task:
+            python_file: ../src/nativo_migration/notebook.py
+            parameters:
+              - "--catalog"
+              - ${var.catalog}
+              - "--schema"
+              - ${var.schema}
 
         - task_key: test_transformation
           depends_on:
             - task_key: silver_transformation
           job_cluster_key: migration_cluster
-          spark_python_task: # Corrected from python_task
-            python_file: "../src/nativo_migration/test_migration.py"
+          libraries:
+            - whl: ../../dist/*.whl
+          spark_python_task:
+            python_file: ../src/nativo_migration/test_migration.py
+            parameters:
+              - "--catalog"
+              - ${var.catalog}
+              - "--schema"
+              - ${var.schema}

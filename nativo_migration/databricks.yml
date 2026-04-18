@@ -36,19 +36,7 @@ targets:
     variables:
       catalog: nativo_prod
       schema: raw_test
-      clusters:
-      - name: nativo_dev_cluster
-        spark_version: "15.4.x-scala2.12"
-        node_type_id: "n2-highmem-4"
-        num_workers: 1
-        gcp_attributes:
-          availability: PREEMPTIBLE_GCP
-          preemptible_percentage: 100
-        disk_spec:
-          disk_type:
-            gcp_disk_type: BALANCED_SSD
-          disk_size: 50
-          disk_count: 1
+      
   prod:
     mode: production
     workspace:
