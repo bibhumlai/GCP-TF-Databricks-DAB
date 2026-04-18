@@ -61,6 +61,8 @@ jobs:
 
       - name: Set up Terraform
         uses: databricks/setup-cli@main
+        with:
+          version: "latest"  #
       - name: databricks bundle valdiate
         run: databricks bundle validate
         env:

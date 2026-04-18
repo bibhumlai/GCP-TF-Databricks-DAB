@@ -33,19 +33,19 @@ resource "databricks_cluster_policy" "migration_policy" {
             "value": "job"
         },
         # Fix for SSD_TOTAL_GB quota: Limit the disk size per worker
-    "gcp_attributes.boot_disk_size_gb": {
-      "type": "range",
-      "maxValue": 50
+        "gcp_attributes.boot_disk_size_gb": {
+            "type": "range",
+            "maxValue": 50
     },
     # Force a cheaper/standard disk type if you don't strictly need SSD
-    "gcp_attributes.gce_availability": {
-      "type": "fixed",
-      "value": "ON_DEMAND_GCP"
+        "gcp_attributes.gce_availability": {
+          "type": "fixed",
+          "value": "ON_DEMAND_GCP"
     },
     # Limit the maximum number of workers to prevent aggregate disk blow-out
-    "num_workers": {
-      "type": "range",
-      "maxValue": 4
+        "num_workers": {
+          "type": "range",
+          "maxValue": 4
     }
 
     })
