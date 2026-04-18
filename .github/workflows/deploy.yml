@@ -37,6 +37,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      # ADD THE SAME UV INSTALL STEPS HERE
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+        
+      - name: Add uv to PATH
+        run: echo "$HOME/.astral-uv/bin" >> $GITHUB_PATH
       
       - name: databricks CLI setup
         uses: databricks/setup-cli@main
