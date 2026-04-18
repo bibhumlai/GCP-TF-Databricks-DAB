@@ -86,6 +86,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.5
+          terraform_wrapper: false # Disable the Terraform wrapper to avoid conflicts with Databricks CLI
 
       # # Inject Terraform here too!
       # - name: Setup Terraform
@@ -102,8 +103,8 @@ jobs:
       - name: databricks CLI setup
         uses: databricks/setup-cli@main
 
-      - name: Skip Terraform signature verification
-        run: echo "DATABRICKS_TF_SKIP_VERIFY=1" >> $GITHUB_ENV
+      - name: Force Databricks to use system Terraform
+        run:  echo "DATABRICKS_TF_EXEC_PATH=$(which terraform)" >> $GITHUB_ENV
 
       # - name: Import HashiCorp GPG keys
       #   run: |
